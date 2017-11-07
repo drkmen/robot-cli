@@ -5,7 +5,6 @@ require 'yaml'
 require './field.rb'
 
 class Robot < Thor
-
   attr_accessor :position
 
   def initialize(*args)
@@ -16,30 +15,30 @@ class Robot < Thor
     @field.map[self.position[0]][self.position[1]] = 'X'
   end
 
-  desc 'move', 'move robot'
+  desc 'go left', 'move robot'
   def go(side)
     self.send side
-    return false unless validate
+    return false unless valid?
     update_position
     @field.map[self.position[0]][self.position[1]] = 0
+    @field.draw
   end
 
-  desc 'position', 'get robot position'
+  desc 'get', 'get robot position'
   def get
-    @field.print
+    @field.draw
   end
 
   private
 
-  def validate
-    result = nil
-    if self.position[0] >= @field.height || self.position[1] >= @field.width
-      p 'not allowed'
-      result = false
+  def valid?
+    if self.position[0].between?(0, @field.height) && self.position[1].between?(0, @field.width)
+      true
     else
-      result = true
+      p 'not allowed'
+      @field.draw
+      false
     end
-    return result
   end
 
   def up
@@ -63,9 +62,7 @@ class Robot < Thor
     @conf['x'] = self.position[1]
     File.open('position.yml', 'w') {|f| f.write @conf.to_yaml }
     @field.map[self.position[0]][self.position[1]] = 'X'
-    @field.print
   end
-
 end
 
 Robot.start(ARGV)

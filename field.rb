@@ -1,5 +1,4 @@
 class Field
-
   attr_accessor :map, :width, :height
 
   def initialize
@@ -8,8 +7,9 @@ class Field
     self.map = Array.new(self.width) { Array.new(self.height, 0) }
   end
 
-  def print
-    map.each{|arr| p arr}
+  def draw
+    map.each do |arr|
+      p arr.join(' ')
+    end
   end
-
 end
